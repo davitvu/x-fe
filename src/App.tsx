@@ -13,12 +13,11 @@ function App() {
 
     return () => clearTimeout(timer);
   }, []);
-
-  if (loading) return <LoadingIntro />;
+  
 
   return (
     <ThemeProvider>
-      <AppRoutes />
+      {loading ? <LoadingIntro /> : <AppRoutes />}
     </ThemeProvider>
   )
 }
