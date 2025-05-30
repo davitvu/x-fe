@@ -1,9 +1,13 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap'); */
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
+@import "./fonts/chirp/stylesheet.css";
 
 body {
     /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; */
-    font-family: "Chirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    /* font-family: "Twitter Chirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; */
+    font-family: "Twitter Chirp";
 }
+
 @layer base {
 }

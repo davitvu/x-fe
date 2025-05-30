@@ -1,10 +1,12 @@
+import { ThemeProvider } from "./contexts/ThemeContext";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
-  
+
   return (
-    <>
-      <h1 className="text-red-500 text-6xl">X - FE</h1>
-    </>
+    <ThemeProvider>
+      <AppRoutes />
+    </ThemeProvider>
   )
 }
 
