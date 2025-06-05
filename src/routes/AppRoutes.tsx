@@ -1,13 +1,16 @@
-import { BrowserRouter, Route, Routes } from 'react-router'
-import Login from '../pages/Auth/Login';
+import { Route, Routes } from 'react-router'
+import AuthPage from '../pages/Auth/AuthPage';
+import Login from '../pages/Auth/ModalAuth/Login';
+import SignUp from '../pages/Auth/ModalAuth/SignUp';
 
 const AppRoutes = () => {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path='/' element={<Login />} />
-            </Routes>
-        </BrowserRouter>
+        <Routes>
+            <Route path='/' element={<AuthPage />} />
+            <Route path='/login' element={<Login />} />
+            <Route path='/signup' element={<SignUp />} />
+            {/* <Route path='/' element={<HomePage />} /> */}
+        </Routes>
     )
 }
 
