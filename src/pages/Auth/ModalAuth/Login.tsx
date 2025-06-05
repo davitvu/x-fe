@@ -58,7 +58,9 @@ const Login = () => {
             <h1 className="self-start mb-6 text-2xl font-bold text-black sm:my-6 sm:text-3xl dark:text-white">Sign in to X</h1>
 
             {/* Google login button */}
-            <div className="w-full md:w-[300px] h-[38px] flex items-center justify-center cursor-pointer border-[1px] hover:border-[#d5e3fa] transition-all duration-300 ease-in-out hover:bg-[#f1f6fe] border-[#dbdce0] rounded-[20px] mb-4 dark:bg-white dark:text-black ">
+            <div 
+                onClick={() => alert("tính năng chưa dùng được ăn em thong cãm")} 
+                className="w-full md:w-[300px] h-[38px] flex items-center justify-center cursor-pointer border-[1px] hover:border-[#d5e3fa] transition-all duration-300 ease-in-out hover:bg-[#f1f6fe] border-[#dbdce0] rounded-[20px] mb-4 dark:bg-white dark:text-black ">
                 <svg className="w-[18px] h-[18px] mr-2" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
                     <g>
                         <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
