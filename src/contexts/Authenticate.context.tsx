@@ -1,7 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { fetchMe } from "../services/auth.service";
-import { GiSpinalCoil } from "react-icons/gi";
-
 interface AuthenContext {
     isAuthenticated: boolean;
     setIsAuthenticated: (value: boolean) => void;
