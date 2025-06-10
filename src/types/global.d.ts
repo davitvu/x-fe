@@ -8,7 +8,7 @@ declare global {
         email: string,
         role: string,
         avatarUrl: string,
-        createdAt: Date,
-        updateAt: Date
+        createdAt: string,
+        updatedAt: string
     }
 }

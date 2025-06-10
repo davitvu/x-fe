@@ -94,20 +94,22 @@ const HomePage = () => {
                             <UserInfoField label="Email" value={user?.email} />
                             <UserInfoField label="Role" value={user?.role} />
                             <UserInfoField label="Avatar URL" value={user?.avatarUrl} />
-                            <UserInfoField label="Is Admin" value={user?.isAdmin} />
-                            <UserInfoField label="Is Active" value={user?.isActive} />
-                            <UserInfoField label="Phone" value={user?.phone} />
-                            <UserInfoField label="Address" value={user?.address} />
-                            <UserInfoField label="Bio" value={user?.bio} />
-                            <UserInfoField label="Created At"
+                            {/* <UserInfoField label="Is Admin" value={user?.isAdmin} /> */}
+                            {/* <UserInfoField label="Is Active" value={user?.isActive} /> */}
+                            {/* <UserInfoField label="Phone" value={user?.phone} /> */}
+                            {/* <UserInfoField label="Address" value={user?.address} /> */}
+                            {/* <UserInfoField label="Bio" value={user?.bio} /> */}
+                            <UserInfoField
+                                label="Created At"
                                 value={user?.createdAt ? formatDate(user.createdAt) : null}
                             />
-                            <UserInfoField label="Updated At"
-                                value={user?.updatedAt ? formatDate(user.updatedAt) : null}
+                            <UserInfoField
+                                label="Updated At"
+                                value={user?.updatedAt ? formatDate(user.updatedAt) : null}  // Now using updatedAt
                             />
-                            <UserInfoField label="Last Login"
+                            {/* <UserInfoField label="Last Login"
                                 value={user?.lastLogin ? formatDate(user.lastLogin) : null}
-                            />
+                            /> */}
                         </div>
                     </div>
 
