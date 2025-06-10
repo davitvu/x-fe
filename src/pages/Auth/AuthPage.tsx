@@ -1,6 +1,7 @@
 import { useModal } from "../../contexts/ModalContext";
 import SignUp from "./ModalAuth/SignUp";
 import Login from "./ModalAuth/Login";
+import toast from "react-hot-toast";
 
 const AuthPage = () => {
     const { openModal } = useModal();
@@ -20,7 +21,9 @@ const AuthPage = () => {
                         </div>
                         {/* Google login button */}
                         <div
-                            onClick={() => alert("tính năng chưa dùng được ăn em thong cãm")}
+                            onClick={() => toast('Tính năng đang phát triển ăn em thum cãm!', {
+                                icon: '🚀',
+                            })}
                             className="w-full md:w-[300px] h-[38px] flex items-center justify-center cursor-pointer border-[1px] hover:border-[#d5e3fa] transition-all duration-300 ease-in-out hover:bg-[#f1f6fe] border-[#dbdce0] rounded-[20px] mb-4 dark:bg-white dark:text-black ">
                             <svg className="w-[18px] h-[18px] mr-2" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
                                 <g>
@@ -53,7 +56,9 @@ const AuthPage = () => {
                         </div> */}
                         {/* Google login button */}
                         <div
-                            onClick={() => alert("tính năng chưa dùng được ăn em thong cãm")}
+                            onClick={() => toast('Tính năng đang phát triển ăn em thum cãm!', {
+                                icon: '🚀',
+                            })}
                             className="w-full md:w-[300px] h-[38px] flex items-center justify-center cursor-pointer border-[1px] transition-all duration-300 ease-in-out hover:bg-[#e6e6e6] border-[#d1d9de] rounded-[20px] dark:bg-white dark:text-black ">
                             <svg className="w-[20px] h-[20px] mr-2" viewBox="0 0 24 24" aria-hidden="true">
                                 <g>
@@ -81,8 +86,10 @@ const AuthPage = () => {
                             className="mb-6 cursor-pointer w-full md:w-[300px] h-[38px] flex items-center justify-center border-[1px] transition-all duration-300 ease-in-out border-[#d1d9de] dark:border-[#566470] bg-white dark:bg-white hover:bg-[#ecf5fd] dark:hover:bg-[#d8dbdc] rounded-[20px]">
                             <span className="text-[#479bea] text-base md:text-[15px] font-semibold">Sign in</span>
                         </button>
-                        <div 
-                            onClick={() => alert("tính năng chưa dùng được ăn em thong cãm")} 
+                        <div
+                            onClick={() => toast('Tính năng đang phát triển ăn em thum cãm!', {
+                                icon: '🚀',
+                            })}
                             className="w-full mb-9 md:w-[300px] h-[38px] flex items-center justify-center cursor-pointer border-[1px] transition-all duration-300 ease-in-out hover:bg-[#e6e6e6] border-[#d1d9de] rounded-[20px] dark:border-[#566470] dark:bg-black dark:hover:bg-[#181919] dark:text-white ">
                             <svg className="w-[20px] h-[20px] mr-2" viewBox="0 0 33 32" aria-hidden="true">
                                 <g>
@@ -170,7 +177,7 @@ const AuthPage = () => {
                         <a href="#" className="hover:underline">© 2025 X Corp.</a>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     )
 }

@@ -1,16 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useModal } from "../../../contexts/ModalContext";
 import Login from "./Login";
 import { ButtonSubmit } from "../../../components/Auth/ButtonSubmit";
+import toast from "react-hot-toast";
+import { ImSpinner10 } from "react-icons/im";
+import { findUsername, login, signup } from "../../../services/auth.service";
 
 const SignUp = () => {
-    const { openModal } = useModal();
+    const { openModal, closeModal } = useModal();
 
+    const [loading, setLoading] = useState(false);
     const [name, setName] = useState('');
     const [lengthInputFullname, setLengthInputFullname] = useState(0);
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isUsernameValid, setIsUsernameValid] = useState(false);
+    const [isEmailValid, setIsEmailValid] = useState(false);
+    const [spinLoading, setSpinLoading] = useState(false);
+    const timeoutRef = useRef<number | null>(null);
 
     const [errors, setErrors] = useState({
         name: false,
@@ -22,24 +30,61 @@ const SignUp = () => {
 
     useEffect(() => {
         const isValid = name.trim() !== '' &&
-            username.trim() !== '' &&
-            /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email.trim()) &&
+            username.trim() !== '' && isUsernameValid &&
+            /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email.trim()) && isEmailValid &&
             password.length >= 6 &&
             /[A-Z]/.test(password) &&
             /[a-z]/.test(password) &&
             /[0-9]/.test(password);
         setIsFormValid(isValid);
-    }, [name, username, email, password]);
+    }, [name, username, isUsernameValid, isEmailValid, email, password]);
+
+    const HandlerQueryUsername = async (username: string) => {
+        const res = await findUsername(username);
+        return res?.data?.success || false;
+    }
+
+    const handleInputCheck = async (e: React.ChangeEvent<HTMLInputElement>, type: 'username' | 'email') => {
+        const value = e.target.value;
+        type === 'username' ? setUsername(value) : setEmail(value);
+        setErrors(prev => ({ ...prev, [type]: false }));
+
+        if (value.trim() !== '') {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+
+            timeoutRef.current = setTimeout(async () => {
+                try {
+                    setSpinLoading(true);
+                    const result = await HandlerQueryUsername(value);
+                    if (result) {
+                        type === 'username' ? setIsUsernameValid(false) : setIsEmailValid(false);
+                        setErrors(prev => ({ ...prev, [type]: true }));
+                        toast.error(`${type === 'username' ? 'Username' : 'Email'} đã tồn tại`);
+                    } else {
+                        type === 'username' ? setIsUsernameValid(true) : setIsEmailValid(true);
+                        setErrors(prev => ({ ...prev, [type]: false }));
+                    }
+                } catch (error) {
+                    type === 'username' ? setIsUsernameValid(false) : setIsEmailValid(false);
+                    toast.error('Error checking username');
+                } finally {
+                    setSpinLoading(false);
+                }
+            }, 800);
+        } else {
+            type === 'username' ? setIsUsernameValid(false) : setIsEmailValid(false);
+            setSpinLoading(false);
+        }
+    };
 
     const validateUsername = () => {
         if (username.trim() === '') {
             setErrors(prev => ({ ...prev, username: true }));
             return false;
         }
-
-        // logic query db so sánh user
-
-        return true;
+        return isUsernameValid;
     };
 
     const validateName = () => {
@@ -54,7 +99,7 @@ const SignUp = () => {
         const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
         const isValid = emailRegex.test(email.trim());
         setErrors(prev => ({ ...prev, email: !isValid }));
-        return isValid;
+        return isValid && isEmailValid;
     };
 
     const validatePassword = () => {
@@ -69,15 +114,37 @@ const SignUp = () => {
     };
 
     const validateForm = () => {
+        const isNameValid = validateName();
         const isUsernameValid = validateUsername();
+        const isEmailValid = validateEmail();
         const isPasswordValid = validatePassword();
-        return isUsernameValid && isPasswordValid;
+        return isNameValid && isUsernameValid && isEmailValid && isPasswordValid;
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (validateForm()) {
-            // Proceed with login
-            alert("username: " + username + ", pw: " + password);
+            try {
+                setLoading(true);
+                const res = await signup(name, username, email, password);
+
+                if (res && res.data && res.data.success && res.data.data) {
+                    toast.success(res.data.message);
+                    const resLogin = await login(username, password);
+                    if (resLogin && resLogin.data.success) {
+                        closeModal();
+                        window.location.href = "/";
+                        toast.success(resLogin.data.message);
+                    }
+                } else if (res.data && !res.data.success) {
+                    toast.error(res.data.message);
+                } else {
+                    toast.error('Signup failed');
+                }
+            } catch (error: any) {
+                toast.error(error.data.message || 'Signup failed');
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
@@ -134,12 +201,9 @@ const SignUp = () => {
                 >
                     <input id="username"
                         value={username}
-                        onChange={(e) => {
-                            setUsername(e.target.value);
-                            setErrors(prev => ({ ...prev, username: false }));
-                        }}
+                        onChange={(e) => handleInputCheck(e, 'username')}
                         onBlur={validateUsername}
-                        className={`h-[19px] dark:text-white absolute bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer`}
+                        className={`h-[19px] dark:text-white pr-6 absolute bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer`}
                         type="text" />
                     <label htmlFor="username"
                         className={`cursor-auto absolute peer-focus:top-4 peer-focus:text-sm top-1/2 left-2 -translate-y-1/2 transition-all duration-200 ease-in-out peer-focus:text-[#1d9bf0] leading-[23px] text-base
@@ -147,9 +211,13 @@ const SignUp = () => {
                         ${document.activeElement?.id === 'username' ? 'text-[#1d9bf0]' : ''}
                         ${errors.username && !username ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-[#536471]"}`}
                     >Username</label>
+                    <div className={`absolute bottom-2 right-2 ${spinLoading ? "block animate-spin" : "hidden"}`}>
+                        <ImSpinner10 />
+                    </div>
                 </div>
                 {/* Username */}
 
+                {/* Email */}
                 <div className={`group relative mb-5 border rounded-sm h-[58px] w-full transition-all duration-200 ease-in-out 
                 ${errors.email
                         ? 'border-[#f4212e] dark:border-[#f4212e]'
@@ -158,12 +226,9 @@ const SignUp = () => {
                 >
                     <input id="email"
                         value={email}
-                        onChange={(e) => {
-                            setEmail(e.target.value);
-                            setErrors(prev => ({ ...prev, email: false }));
-                        }}
+                        onChange={(e) => handleInputCheck(e, 'email')}
                         onBlur={validateEmail}
-                        className="h-[19px] dark:text-white absolute bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer"
+                        className="h-[19px] pr-6 dark:text-white absolute bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer"
                         type="email" />
                     <label htmlFor="email"
                         className={`cursor-auto absolute peer-focus:top-4 peer-focus:text-sm top-1/2 left-2 -translate-y-1/2 transition-all duration-200 ease-in-out peer-focus:text-[#1d9bf0] leading-[23px] text-base
@@ -171,7 +236,11 @@ const SignUp = () => {
                         ${document.activeElement?.id === 'email' ? 'text-[#1d9bf0]' : ''}
                         ${errors.email ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-[#536471]"}`}
                     >Email</label>
+                    <div className={`absolute bottom-2 right-2 ${spinLoading ? "block animate-spin" : "hidden"}`}>
+                        <ImSpinner10 />
+                    </div>
                 </div>
+                {/* Email */}
 
                 <div className="mb-3">
                     <p className="mb-1 text-[14px] font-bold dark:text-white">Password requirements</p>
@@ -215,7 +284,9 @@ const SignUp = () => {
                     onClick={() => handleSubmit()}
                     disabled={!isFormValid}
                     isFormValid={isFormValid}
-                />
+                >
+                    {loading ? 'Signing in...' : 'Sign in'}
+                </ButtonSubmit>
             </div>
         </div>
     );

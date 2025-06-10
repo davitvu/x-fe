@@ -4,6 +4,7 @@ import { ModalProvider } from "./contexts/ModalContext";
 import AppRoutes from "./routes/AppRoutes";
 import LoadingIntro from "./pages/Loading/LoadingIntro";
 import { BrowserRouter } from "react-router";
+import { AuthenticatedProvider } from "./contexts/Authenticate.context";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -19,9 +20,11 @@ function App() {
   return (
     <BrowserRouter>
       <ThemeProvider>
-        <ModalProvider>
-          {loading ? <LoadingIntro /> : <AppRoutes />}
-        </ModalProvider>
+        <AuthenticatedProvider>
+          <ModalProvider>
+            {loading ? <LoadingIntro /> : <AppRoutes />}
+          </ModalProvider>
+        </AuthenticatedProvider>
       </ThemeProvider>
     </BrowserRouter>
   );

@@ -1,19 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useModal } from "../../../contexts/ModalContext";
 import SignUp from "./SignUp";
 import Forgot from "./Forgot";
 import { ButtonSubmit } from "../../../components/Auth/ButtonSubmit";
+import { findUsername, login } from "../../../services/auth.service";
+import toast from "react-hot-toast";
+import { ImSpinner10 } from "react-icons/im";
 
 const Login = () => {
-    const { openModal } = useModal();
+    const { openModal, closeModal } = useModal();
 
+    const [loading, setLoading] = useState(false);
     const [username, setUsername] = useState('');
+    const [isUsernameValid, setIsUsernameValid] = useState(false);
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({
         username: false,
         password: false
     });
     const [isFormValid, setIsFormValid] = useState(false);
+    const [spinLoading, setSpinLoading] = useState(false);
+    const timeoutRef = useRef<number | null>(null);
+
 
     // Kiểm tra form mỗi khi username hoặc password thay đổi
     useEffect(() => {
@@ -21,15 +29,51 @@ const Login = () => {
         setIsFormValid(isValid);
     }, [username, password]);
 
+    const handleUsernameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setUsername(value);
+        setErrors(prev => ({ ...prev, username: false }));
+
+        if (value.trim() !== '') {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+
+            timeoutRef.current = setTimeout(async () => {
+                try {
+                    setSpinLoading(true);
+                    const result = await HandlerQueryUsername(value);
+                    if (result) {
+                        setIsUsernameValid(true);
+                        setErrors(prev => ({ ...prev, username: false }));
+                    } else {
+                        setIsUsernameValid(false);
+                        setErrors(prev => ({ ...prev, username: true }));
+                    }
+                } catch (error) {
+                    setIsUsernameValid(false);
+                    toast.error('Error checking username');
+                } finally {
+                    setSpinLoading(false);
+                }
+            }, 1000);
+        } else {
+            setIsUsernameValid(false);
+            setSpinLoading(false);
+        }
+    };
+
+    const HandlerQueryUsername = async (username: string) => {
+        const res = await findUsername(username);
+        return res?.data?.success || false;
+    }
+
     const validateUsername = () => {
         if (username.trim() === '') {
             setErrors(prev => ({ ...prev, username: true }));
             return false;
         }
-
-        // logic query db so sánh user
-
-        return true;
+        return isUsernameValid;
     };
 
     const validatePassword = () => {
@@ -46,10 +90,27 @@ const Login = () => {
         return isUsernameValid && isPasswordValid;
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (validateForm()) {
-            // Proceed with login
-            alert("username: " + username + ", pw: " + password);
+            try {
+                setLoading(true);
+                const res = await login(username, password);
+
+                if (res && res.data && res.data.success && res.data.data) {
+                    localStorage.setItem('access_token', res.data.data.accessToken);
+                    closeModal();
+                    window.location.href = "/";
+                    toast.success(res.data.message);
+                } else if (res.data && !res.data.success) {
+                    toast.error(res.data.message);
+                } else {
+                    toast.error('Login failed');
+                }
+            } catch (error: any) {
+                toast.error(error.data.message || 'Login failed');
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
@@ -58,8 +119,10 @@ const Login = () => {
             <h1 className="self-start mb-6 text-2xl font-bold text-black sm:my-6 sm:text-3xl dark:text-white">Sign in to X</h1>
 
             {/* Google login button */}
-            <div 
-                onClick={() => alert("tính năng chưa dùng được ăn em thong cãm")} 
+            <div
+                onClick={() => toast('Tính năng đang phát triển ăn em thum cãm!', {
+                    icon: '🚀',
+                })}
                 className="w-full md:w-[300px] h-[38px] flex items-center justify-center cursor-pointer border-[1px] hover:border-[#d5e3fa] transition-all duration-300 ease-in-out hover:bg-[#f1f6fe] border-[#dbdce0] rounded-[20px] mb-4 dark:bg-white dark:text-black ">
                 <svg className="w-[18px] h-[18px] mr-2" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
                     <g>
@@ -97,7 +160,9 @@ const Login = () => {
 
             {/* Apple login button */}
             <div
-                onClick={() => alert("tính năng chưa dùng được ăn em thong cãm")}
+                onClick={() => toast('Tính năng đang phát triển ăn em thum cãm!', {
+                    icon: '🚀',
+                })}
                 className="w-full md:w-[300px] mb-3 h-[38px] sm:h-[40px] flex items-center justify-center cursor-pointer border-[1px] transition-all duration-300 ease-in-out hover:bg-[#e6e6e6] border-[#d1d9de] rounded-[20px] dark:bg-white dark:text-black "
             >
                 <svg className="w-[20px] h-[20px] mr-2" viewBox="0 0 24 24" aria-hidden="true">
@@ -126,12 +191,9 @@ const Login = () => {
             >
                 <input id="username"
                     value={username}
-                    onChange={(e) => {
-                        setUsername(e.target.value);
-                        setErrors(prev => ({ ...prev, username: false }));
-                    }}
+                    onChange={handleUsernameChange}
                     onBlur={validateUsername}
-                    className={`h-[19px] dark:text-white absolute bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer`}
+                    className={`h-[19px] dark:text-white pr-5 absolute bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer`}
                     type="text" />
                 <label htmlFor="username"
                     className={`cursor-auto absolute peer-focus:top-4 peer-focus:text-sm top-1/2 left-2 -translate-y-1/2 transition-all duration-200 ease-in-out peer-focus:text-[#1d9bf0] leading-[23px] text-base
@@ -139,40 +201,47 @@ const Login = () => {
                         ${document.activeElement?.id === 'username' ? 'text-[#1d9bf0]' : ''}
                         ${errors.username && !username ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-[#536471]"}`}
                 >Phone, email, or username</label>
+                <div className={`absolute bottom-2 right-2 ${spinLoading ? "block animate-spin" : "hidden"}`}>
+                    <ImSpinner10 />
+                </div>
             </div>
             {/* Phone, email, or username */}
 
             {/* Password */}
-            <div className={`group relative mb-5 border rounded-sm h-[58px] w-full transition-all duration-200 ease-in-out 
+            {isUsernameValid ?
+                <div className={`group relative mb-5 border rounded-sm h-[58px] w-full transition-all duration-200 ease-in-out 
                 ${errors.password
-                    ? 'border-[#f4212e] dark:border-[#f4212e]'
-                    : 'border-[#cfd9de] dark:border-[#333639] has-[:focus]:border-[#1d9bf0] has-[:focus]:shadow-[0px_0px_0px_1px_rgb(29,155,240)]'}`}
-                onClick={() => document.getElementById('password')?.focus()}
-            >
-                <input id="password"
-                    value={password}
-                    onChange={(e) => {
-                        setPassword(e.target.value);
-                        setErrors(prev => ({ ...prev, password: false }));
-                    }}
-                    onBlur={validatePassword}
-                    className="h-[19px] absolute dark:text-white bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer"
-                    type="password" />
-                <label htmlFor="password"
-                    className={`cursor-auto absolute peer-focus:top-4 peer-focus:text-sm top-1/2 left-2 -translate-y-1/2 transition-all duration-200 ease-in-out peer-focus:text-[#1d9bf0] leading-[23px] text-base
+                        ? 'border-[#f4212e] dark:border-[#f4212e]'
+                        : 'border-[#cfd9de] dark:border-[#333639] has-[:focus]:border-[#1d9bf0] has-[:focus]:shadow-[0px_0px_0px_1px_rgb(29,155,240)]'}`}
+                    onClick={() => document.getElementById('password')?.focus()}
+                >
+                    <input id="password"
+                        value={password}
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                            setErrors(prev => ({ ...prev, password: false }));
+                        }}
+                        onBlur={validatePassword}
+                        className="h-[19px] absolute dark:text-white bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer"
+                        type="password" />
+                    <label htmlFor="password"
+                        className={`cursor-auto absolute peer-focus:top-4 peer-focus:text-sm top-1/2 left-2 -translate-y-1/2 transition-all duration-200 ease-in-out peer-focus:text-[#1d9bf0] leading-[23px] text-base
                         ${password ? 'top-4 text-sm' : 'top-1/2 -translate-y-1/2'}
                         ${document.activeElement?.id === 'password' ? 'text-[#1d9bf0]' : ''}
                         ${errors.password && !password ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-[#536471]"}`}
-                >Password</label>
-            </div>
+                    >Password</label>
+                </div>
+                : <></>}
             {/* Password */}
 
             <ButtonSubmit
                 onClick={() => handleSubmit()}
-                disabled={!isFormValid}
+                disabled={!isFormValid || loading}
                 isFormValid={isFormValid}
-                className="sm:!h-[38px]"
-            />
+                className={`sm:!h-[38px] ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            >
+                {loading ? 'Signing in...' : 'Sign in'}
+            </ButtonSubmit>
 
             <button
                 onClick={() => openModal(<Forgot />)}
