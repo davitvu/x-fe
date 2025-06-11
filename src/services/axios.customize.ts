@@ -34,10 +34,10 @@ instance.interceptors.response.use(function (response) {
     if (error) {
         if (error.response?.status === 401) {
             localStorage.removeItem('access_token');
-            window.location.href = '/auth';
+            // window.location.href = '/auth';
         }
     }
-    return Promise.reject(error);
+    return Promise.reject(error + "hahsdfihasifsda");
 });
 
 export default instance;
