@@ -43,6 +43,8 @@ const Login = () => {
                 try {
                     setSpinLoading(true);
                     const result = await HandlerQueryUsername(value);
+                    console.log("ket qua HandlerQueryUsername:", result);
+                    
                     if (result) {
                         setIsUsernameValid(true);
                         setErrors(prev => ({ ...prev, username: false }));
