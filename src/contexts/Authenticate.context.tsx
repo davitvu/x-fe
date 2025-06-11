@@ -25,6 +25,10 @@ export const AuthenticatedProvider = (props: Props) => {
         const fetchUser = async () => {
             try {
                 const res = await fetchMe();
+
+                console.log("ket qua tu fetchMe:", res);
+                
+
                 if (res?.data?.data) {
                     setUser(res.data.data);
                     setIsAuthenticated(true);
