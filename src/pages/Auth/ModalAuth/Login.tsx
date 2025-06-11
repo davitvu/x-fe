@@ -42,9 +42,10 @@ const Login = () => {
             timeoutRef.current = setTimeout(async () => {
                 try {
                     setSpinLoading(true);
+                    console.log("chua bi in ra ket qua tu HandlerQueryUsername:");
                     const result = await HandlerQueryUsername(value);
                     console.log("ket qua HandlerQueryUsername:", result);
-                    
+
                     if (result) {
                         setIsUsernameValid(true);
                         setErrors(prev => ({ ...prev, username: false }));
