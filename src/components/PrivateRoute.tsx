@@ -1,6 +1,5 @@
-import { useLocation, useNavigate } from "react-router";
 import { useCurrentAuthenticated } from "../contexts/Authenticate.context";
-import { useEffect } from "react";
+import AuthPage from "../pages/Auth/AuthPage";
 
 interface Props {
     children: React.ReactNode;
@@ -8,17 +7,6 @@ interface Props {
 
 const PrivateRoute = ({ children }: Props) => {
     const { isAuthenticated, isAppLoading } = useCurrentAuthenticated();
-    const location = useLocation();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        if (!isAuthenticated) {
-            navigate("/auth", {
-                state: { from: location },
-                replace: true
-            });
-        }
-    }, [isAuthenticated, isAppLoading, navigate, location]);
 
     if (isAppLoading) {
         return null;
@@ -32,11 +20,7 @@ const PrivateRoute = ({ children }: Props) => {
         history.replace("/home"): Thay thế entry hiện tại trong lịch sử trình duyệt, ngăn người dùng quay lại trang trước đó.
      */
     if (!isAuthenticated) {
-        navigate("/auth", {
-            state: { from: location },
-            replace: true
-        });
-        return null;
+        return <AuthPage />
     }
 
     return <>{children}</>

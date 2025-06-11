@@ -6,9 +6,11 @@ import { ButtonSubmit } from "../../../components/Auth/ButtonSubmit";
 import { findUsername, login } from "../../../services/auth.service";
 import toast from "react-hot-toast";
 import { TbFidgetSpinner } from "react-icons/tb";
+import { useCurrentAuthenticated } from "../../../contexts/Authenticate.context";
 
 const Login = () => {
     const { openModal, closeModal } = useModal();
+    const { setIsAuthenticated } = useCurrentAuthenticated();
 
     const [loading, setLoading] = useState(false);
     const [username, setUsername] = useState('');
@@ -56,7 +58,7 @@ const Login = () => {
                 } finally {
                     setSpinLoading(false);
                 }
-            }, 1000);
+            }, 800);
         } else {
             setIsUsernameValid(false);
             setSpinLoading(false);
@@ -95,12 +97,12 @@ const Login = () => {
             try {
                 setLoading(true);
                 const res = await login(username, password);
-
+                
                 if (res && res.data && res.data.success && res.data.data) {
                     localStorage.setItem('accessToken', res.data.data.accessToken);
-                    closeModal();
-                    window.location.href = "/";
                     toast.success(res.data.message);
+                    closeModal();
+                    setIsAuthenticated(true);
                 } else if (res.data && !res.data.success) {
                     toast.error(res.data.message);
                 } else {

@@ -5,9 +5,12 @@ import { ButtonSubmit } from "../../../components/Auth/ButtonSubmit";
 import toast from "react-hot-toast";
 import { TbFidgetSpinner } from "react-icons/tb";
 import { findUsername, login, signup } from "../../../services/auth.service";
+import { useCurrentAuthenticated } from "../../../contexts/Authenticate.context";
 
 const SignUp = () => {
     const { openModal, closeModal } = useModal();
+    const { setIsAuthenticated } = useCurrentAuthenticated();
+
 
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState('');
@@ -131,9 +134,9 @@ const SignUp = () => {
                     toast.success(res.data.message);
                     const resLogin = await login(username, password);
                     if (resLogin && resLogin.data.success) {
-                        closeModal();
-                        window.location.href = "/";
                         toast.success(resLogin.data.message);
+                        closeModal();
+                        setIsAuthenticated(true);
                     }
                 } else if (res.data && !res.data.success) {
                     toast.error(res.data.message);

@@ -8,21 +8,29 @@ const HomePage = () => {
     const { setUser, setIsAuthenticated } = useCurrentAuthenticated();
 
     const handleLogout = async () => {
-        try {
-            const res = await logout();
-            if (res?.data?.success) {
-                // Clear auth data
-                localStorage.removeItem('access_token');
-                setUser(null);
-                setIsAuthenticated(false);
-
-                toast.success('Đăng xuất thành công');
-            } else {
-                toast.error(res?.data?.message || 'Đăng xuất thất bại');
+        toast.promise(
+            new Promise(async (resolve, reject) => {
+                try {
+                    const res = await logout();
+                    if (res?.data?.success) {
+                        // Clear auth data
+                        localStorage.removeItem('accessToken');
+                        setUser(null);
+                        setIsAuthenticated(false);
+                        resolve('Đăng xuất thành công');
+                    } else {
+                        reject(res?.data?.message || 'Đăng xuất thất bại');
+                    }
+                } catch (error: any) {
+                    reject(error.response?.data?.message || 'Lỗi hệ thống');
+                }
+            }),
+            {
+                success: <b>Đăng xuất thành công!</b>,
+                loading: 'Đang đăng xuất...',
+                error: (error) => <b>{error as string}</b>,
             }
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || 'Lỗi hệ thống');
-        }
+        );
     }
 
     // Thêm base URL cho avatar
