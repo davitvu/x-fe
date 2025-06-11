@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { fetchMe } from "../services/auth.service";
+import LoadingWithLogo from "../components/Loading/LoadingWithLogo";
 interface AuthenContext {
     isAuthenticated: boolean;
     setIsAuthenticated: (value: boolean) => void;
@@ -40,18 +41,18 @@ export const AuthenticatedProvider = (props: Props) => {
 
     return (
         <>
-            {isAppLoading === false ?
+            {isAppLoading ?
+                <LoadingWithLogo />
+                // <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                //     <GiSpinalCoil className="animate-spin text-[#36d6b4] text-4xl" />
+                // </div>
+                :
                 <CurrentAuthenContext.Provider value={{
                     isAuthenticated, user, setIsAuthenticated, setUser,
                     isAppLoading, setIsAppLoading
                 }}>
                     {props.children}
                 </CurrentAuthenContext.Provider>
-                :
-                <></>
-                // <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                //     <GiSpinalCoil className="animate-spin text-[#36d6b4] text-4xl" />
-                // </div>
             }
 
         </>

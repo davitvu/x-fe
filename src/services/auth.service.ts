@@ -1,9 +1,11 @@
 import axios from "./axios.customize";
 import type { BackendAuthRes, LoginResponse, SignUpResponse } from "../types/auth";
 
+const authApiPart = "/api/v1/auth";
+
 const signup = async (name: string, username: string, email: string, password: string) => {
     try {
-        const res = await axios.post<BackendAuthRes<SignUpResponse>>("/signup", { name, username, email, password });
+        const res = await axios.post<BackendAuthRes<SignUpResponse>>(authApiPart + "/signup", { name, username, email, password });
         return res;
     } catch (error) {
         throw error;
@@ -12,7 +14,7 @@ const signup = async (name: string, username: string, email: string, password: s
 
 const login = async (username: string, password: string) => {
     try {
-        const res = await axios.post<BackendAuthRes<LoginResponse>>("/login", { username, password });
+        const res = await axios.post<BackendAuthRes<LoginResponse>>(authApiPart + "/login", { username, password });
         return res;
     } catch (error) {
         throw error;
@@ -21,7 +23,7 @@ const login = async (username: string, password: string) => {
 
 const findUsername = async (username: string) => {
     try {
-        const res = await axios.get<BackendAuthRes<null>>("/checkusername", { params: { username } });
+        const res = await axios.get<BackendAuthRes<null>>(authApiPart + "/checkusername", { params: { username } });
         return res;
     } catch (error) {
         throw error;
@@ -30,7 +32,7 @@ const findUsername = async (username: string) => {
 
 const fetchMe = async () => {
     try {
-        const res = await axios.get<BackendAuthRes<User>>("/me");
+        const res = await axios.get<BackendAuthRes<User>>(authApiPart + "/me");
         return res;
     } catch (error) {
         throw error;
@@ -39,7 +41,7 @@ const fetchMe = async () => {
 
 const logout = async () => {
     try {
-        const res = await axios.post<BackendAuthRes<null>>("/logout");
+        const res = await axios.post<BackendAuthRes<null>>(authApiPart + "/logout");
         return res;
     } catch (error) {
         throw error;

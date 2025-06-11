@@ -6,12 +6,12 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     host: true,
-    proxy: {
-      '/api/v1/auth': {
-        target: 'http://localhost:5001',
-        // changeOrigin: true,
-        // secure: false,
-      }
-    }
+    // proxy: {
+    //   '/api/v1/auth': {
+    //     target: 'http://localhost:5001',
+    //     // changeOrigin: true,
+    //     // secure: false,
+    //   },
+    // }
   }
-})
+});

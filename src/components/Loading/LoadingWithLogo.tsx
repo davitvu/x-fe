@@ -1,6 +1,5 @@
 
-
-const LoadingIntro = () => {
+const LoadingWithLogo = () => {
     return (
         <div className="absolute flex items-center justify-center w-full h-full bg-white dark:bg-black">
             <svg fill="currentColor" className="text-black dark:text-white w-18 h-18" viewBox="0 0 24 24" aria-hidden="true">
@@ -11,4 +10,4 @@ const LoadingIntro = () => {
     )
 };
 
-export default LoadingIntro;
+export default LoadingWithLogo;
