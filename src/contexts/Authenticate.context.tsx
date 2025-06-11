@@ -24,13 +24,7 @@ export const AuthenticatedProvider = (props: Props) => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                console.log("chua bi in ra ket qua tu fetchMe:");
-
                 const res = await fetchMe();
-
-                console.log("ket qua tu fetchMe:", res);
-                
-
                 if (res?.data?.data) {
                     setUser(res.data.data);
                     setIsAuthenticated(true);
@@ -44,6 +38,7 @@ export const AuthenticatedProvider = (props: Props) => {
 
         fetchUser();
     }, []);
+
 
     return (
         <>

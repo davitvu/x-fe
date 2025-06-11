@@ -10,8 +10,6 @@ const HomePage = () => {
     const handleLogout = async () => {
         try {
             const res = await logout();
-
-            console.log(res);
             if (res?.data?.success) {
                 // Clear auth data
                 localStorage.removeItem('access_token');

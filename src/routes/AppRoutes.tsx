@@ -4,6 +4,7 @@ import Login from '../pages/Auth/ModalAuth/Login';
 import SignUp from '../pages/Auth/ModalAuth/SignUp';
 import HomePage from '../pages/Home';
 import PrivateRoute from '../components/PrivateRoute';
+import LoadingWithLogo from '../components/Loading/LoadingWithLogo';
 
 const AppRoutes = () => {
     return (
@@ -16,6 +17,7 @@ const AppRoutes = () => {
             <Route path='/auth' element={<AuthPage />} />
             <Route path='/login' element={<Login />} />
             <Route path='/signup' element={<SignUp />} />
+            <Route path='/loading' element={<LoadingWithLogo />} />
         </Routes>
     )
 }

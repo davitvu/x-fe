@@ -3,7 +3,7 @@ import { useModal } from "../../../contexts/ModalContext";
 import Login from "./Login";
 import { ButtonSubmit } from "../../../components/Auth/ButtonSubmit";
 import toast from "react-hot-toast";
-import { ImSpinner10 } from "react-icons/im";
+import { TbFidgetSpinner } from "react-icons/tb";
 import { findUsername, login, signup } from "../../../services/auth.service";
 
 const SignUp = () => {
@@ -212,7 +212,7 @@ const SignUp = () => {
                         ${errors.username && !username ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-[#536471]"}`}
                     >Username</label>
                     <div className={`absolute bottom-2 right-2 ${spinLoading ? "block animate-spin" : "hidden"}`}>
-                        <ImSpinner10 />
+                        <TbFidgetSpinner />
                     </div>
                 </div>
                 {/* Username */}
@@ -237,7 +237,7 @@ const SignUp = () => {
                         ${errors.email ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-[#536471]"}`}
                     >Email</label>
                     <div className={`absolute bottom-2 right-2 ${spinLoading ? "block animate-spin" : "hidden"}`}>
-                        <ImSpinner10 />
+                        <TbFidgetSpinner />
                     </div>
                 </div>
                 {/* Email */}

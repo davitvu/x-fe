@@ -5,7 +5,7 @@ import Forgot from "./Forgot";
 import { ButtonSubmit } from "../../../components/Auth/ButtonSubmit";
 import { findUsername, login } from "../../../services/auth.service";
 import toast from "react-hot-toast";
-import { ImSpinner10 } from "react-icons/im";
+import { TbFidgetSpinner } from "react-icons/tb";
 
 const Login = () => {
     const { openModal, closeModal } = useModal();
@@ -42,10 +42,7 @@ const Login = () => {
             timeoutRef.current = setTimeout(async () => {
                 try {
                     setSpinLoading(true);
-                    console.log("chua bi in ra ket qua tu HandlerQueryUsername:");
                     const result = await HandlerQueryUsername(value);
-                    console.log("ket qua HandlerQueryUsername:", result);
-
                     if (result) {
                         setIsUsernameValid(true);
                         setErrors(prev => ({ ...prev, username: false }));
@@ -205,7 +202,7 @@ const Login = () => {
                         ${errors.username && !username ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-[#536471]"}`}
                 >Phone, email, or username</label>
                 <div className={`absolute bottom-2 right-2 ${spinLoading ? "block animate-spin" : "hidden"}`}>
-                    <ImSpinner10 />
+                    <TbFidgetSpinner />
                 </div>
             </div>
             {/* Phone, email, or username */}
