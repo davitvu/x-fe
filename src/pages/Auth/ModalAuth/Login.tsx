@@ -97,7 +97,7 @@ const Login = () => {
                 const res = await login(username, password);
 
                 if (res && res.data && res.data.success && res.data.data) {
-                    localStorage.setItem('access_token', res.data.data.accessToken);
+                    localStorage.setItem('accessToken', res.data.data.accessToken);
                     closeModal();
                     window.location.href = "/";
                     toast.success(res.data.message);
