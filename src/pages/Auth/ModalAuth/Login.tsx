@@ -58,7 +58,7 @@ const Login = () => {
                 } finally {
                     setSpinLoading(false);
                 }
-            }, 800);
+            }, 700);
         } else {
             setIsUsernameValid(false);
             setSpinLoading(false);
@@ -67,6 +67,9 @@ const Login = () => {
 
     const HandlerQueryUsername = async (username: string) => {
         const res = await findUsername(username);
+        if (!res?.data?.success) {
+            toast.error(res.data.message);
+        }
         return res?.data?.success || false;
     }
 
