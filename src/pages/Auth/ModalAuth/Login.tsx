@@ -94,25 +94,34 @@ const Login = () => {
 
     const handleSubmit = async () => {
         if (validateForm()) {
-            try {
-                setLoading(true);
-                const res = await login(username, password);
-                
-                if (res && res.data && res.data.success && res.data.data) {
-                    localStorage.setItem('accessToken', res.data.data.accessToken);
-                    toast.success(res.data.message);
-                    closeModal();
-                    setIsAuthenticated(true);
-                } else if (res.data && !res.data.success) {
-                    toast.error(res.data.message);
-                } else {
-                    toast.error('Login failed');
+            toast.promise(
+                new Promise(async (resolve, reject) => {
+                    try {
+                        setLoading(true);
+                        const res = await login(username, password);
+
+                        if (res && res.data && res.data.success && res.data.data) {
+                            localStorage.setItem('accessToken', res.data.data.accessToken);
+                            resolve(res.data.message);
+                            closeModal();
+                            setIsAuthenticated(true);
+                        } else if (res.data && !res.data.success) {
+                            reject(res.data.message);
+                        } else {
+                            reject('Login failed');
+                        }
+                    } catch (error: any) {
+                        reject(error.data.message || 'Login failed');
+                    } finally {
+                        setLoading(false);
+                    }
+                }),
+                {
+                    loading: 'Đang đăng nhập...',
+                    success: <b>Đăng nhập thành công!</b>,
+                    error: (error) => <b>{error as string}</b>,
                 }
-            } catch (error: any) {
-                toast.error(error.data.message || 'Login failed');
-            } finally {
-                setLoading(false);
-            }
+            );
         }
     };
 

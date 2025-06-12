@@ -26,8 +26,8 @@ const HomePage = () => {
                 }
             }),
             {
-                success: <b>Đăng xuất thành công!</b>,
                 loading: 'Đang đăng xuất...',
+                success: <b>Đăng xuất thành công!</b>,
                 error: (error) => <b>{error as string}</b>,
             }
         );

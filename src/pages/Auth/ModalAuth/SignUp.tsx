@@ -126,28 +126,37 @@ const SignUp = () => {
 
     const handleSubmit = async () => {
         if (validateForm()) {
-            try {
-                setLoading(true);
-                const res = await signup(name, username, email, password);
+            toast.promise(
+                new Promise(async (resolve, reject) => {
+                    try {
+                        setLoading(true);
+                        const res = await signup(name, username, email, password);
 
-                if (res && res.data && res.data.success && res.data.data) {
-                    toast.success(res.data.message);
-                    const resLogin = await login(username, password);
-                    if (resLogin && resLogin.data.success) {
-                        toast.success(resLogin.data.message);
-                        closeModal();
-                        setIsAuthenticated(true);
+                        if (res && res.data && res.data.success && res.data.data) {
+                            resolve(res.data.message);
+                            const resLogin = await login(username, password);
+                            if (resLogin && resLogin.data.success) {
+                                resolve(resLogin.data.message);
+                                closeModal();
+                                setIsAuthenticated(true);
+                            }
+                        } else if (res.data && !res.data.success) {
+                            reject(res.data.message);
+                        } else {
+                            reject('Signup failed');
+                        }
+                    } catch (error: any) {
+                        reject(error.data.message || 'Signup failed');
+                    } finally {
+                        setLoading(false);
                     }
-                } else if (res.data && !res.data.success) {
-                    toast.error(res.data.message);
-                } else {
-                    toast.error('Signup failed');
+                }),
+                {
+                    loading: 'Đang đăng nhập...',
+                    success: <b>Đăng nhập thành công!</b>,
+                    error: (error) => <b>{error as string}</b>,
                 }
-            } catch (error: any) {
-                toast.error(error.data.message || 'Signup failed');
-            } finally {
-                setLoading(false);
-            }
+            );
         }
     };
 
