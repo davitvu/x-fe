@@ -1,7 +1,7 @@
 import axios from "./axios.customize";
 import type { BackendAuthRes, LoginResponse, SignUpResponse } from "../types/auth";
 
-const authApiPart = "/api/v1/auth";
+const authApiPart = "/api/auth";
 
 const signup = async (name: string, username: string, email: string, password: string) => {
     try {
