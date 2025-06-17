@@ -2,7 +2,6 @@ import toast from "react-hot-toast";
 import { useCurrentAuthenticated } from "../contexts/Authenticate.context";
 import { logout } from "../services/auth.service";
 
-
 const HomePage = () => {
     const { user } = useCurrentAuthenticated();
     const { setUser, setIsAuthenticated } = useCurrentAuthenticated();
@@ -60,7 +59,6 @@ const HomePage = () => {
             </span>
         </div>
     );
-
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

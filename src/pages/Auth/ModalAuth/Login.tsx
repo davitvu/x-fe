@@ -115,10 +115,10 @@ const Login = () => {
 
                         if (res && res.data && res.data.success && res.data.data) {
                             localStorage.setItem('accessToken', res.data.data.accessToken);
-                            resolve(res.data.message);
                             await refetchUser();
                             closeModal();
                             setIsAuthenticated(true);
+                            resolve(res.data.message);
                         } else if (res.data && !res.data.success) {
                             reject(res.data.message);
                         } else {

@@ -150,10 +150,11 @@ const SignUp = () => {
                             resolve(res.data.message);
                             const resLogin = await login(username, password);
                             if (resLogin && resLogin.data.success) {
-                                resolve(resLogin.data.message);
+                                localStorage.setItem('accessToken', res.data.data.accessToken);
                                 await refetchUser();
                                 closeModal();
                                 setIsAuthenticated(true);
+                                resolve(resLogin.data.message);
                             }
                         } else if (res.data && !res.data.success) {
                             reject(res.data.message);
