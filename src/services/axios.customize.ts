@@ -34,11 +34,8 @@ instance.interceptors.response.use(function (response) {
 }, async function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
-    console.log("hi 1");
 
     if (error) {
-        console.log("hi 2");
-
         const originalRequest = error.config;
 
         if (error.response && error.response.status === 401 && !originalRequest._retry && !isRefreshing) {
@@ -46,13 +43,11 @@ instance.interceptors.response.use(function (response) {
             isRefreshing = true;
 
             try {
-                console.log("da vao-----------------------------------------");
                 const res = await refreshToken();
-                console.log("res cua refreshToken", res);
                 if (res?.data?.data?.accessToken) {
                     localStorage.setItem('accessToken', res.data.data.accessToken);
                     originalRequest.headers['Authorization'] = `Bearer ${res.data.data.accessToken}`;
-                    console.log("accessTOken moiiiiiiiii", res.data.data.accessToken);
+                    
                     return instance(originalRequest);
                 }
             } catch (error) {

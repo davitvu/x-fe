@@ -39,6 +39,15 @@ const fetchMe = async () => {
     }
 }
 
+const refreshToken = async () => {
+    try {
+        const res = await axios.post<BackendAuthRes<SignUpResponse>>(authApiPart + "/refresh");
+        return res;
+    } catch (error) {
+        throw error;
+    }
+}
+
 const logout = async () => {
     try {
         const res = await axios.post<BackendAuthRes<null>>(authApiPart + "/logout");
@@ -48,4 +57,4 @@ const logout = async () => {
     }
 }
 
-export { signup, login, findUsername, fetchMe, logout }
+export { signup, login, findUsername, fetchMe, refreshToken, logout }
