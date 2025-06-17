@@ -3,7 +3,7 @@ import { useModal } from "../../../contexts/ModalContext";
 import SignUp from "./SignUp";
 import Forgot from "./Forgot";
 import { ButtonSubmit } from "../../../components/Auth/ButtonSubmit";
-import { fetchMe, findUsername, login } from "../../../services/auth.service";
+import { findUsername, login } from "../../../services/auth.service";
 import toast from "react-hot-toast";
 import { TbFidgetSpinner } from "react-icons/tb";
 import { useCurrentAuthenticated } from "../../../contexts/Authenticate.context";
