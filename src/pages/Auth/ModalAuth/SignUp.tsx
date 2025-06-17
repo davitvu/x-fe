@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useModal } from "../../../contexts/ModalContext";
 import Login from "./Login";
 import { ButtonSubmit } from "../../../components/Auth/ButtonSubmit";
@@ -6,11 +6,13 @@ import toast from "react-hot-toast";
 import { TbFidgetSpinner } from "react-icons/tb";
 import { findUsername, login, signup } from "../../../services/auth.service";
 import { useCurrentAuthenticated } from "../../../contexts/Authenticate.context";
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
+import { useDebouncedCallback } from 'use-debounce';
 
 const SignUp = () => {
     const { openModal, closeModal } = useModal();
-    const { setIsAuthenticated } = useCurrentAuthenticated();
-
+    const { setIsAuthenticated, refetchUser } = useCurrentAuthenticated();
 
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState('');
@@ -19,9 +21,8 @@ const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isUsernameValid, setIsUsernameValid] = useState(false);
-    const [isEmailValid, setIsEmailValid] = useState(false);
     const [spinLoading, setSpinLoading] = useState(false);
-    const timeoutRef = useRef<number | null>(null);
+    const [isPasswordVisible, setPasswordVisible] = useState(true);
 
     const [errors, setErrors] = useState({
         name: false,
@@ -31,56 +32,70 @@ const SignUp = () => {
     });
     const [isFormValid, setIsFormValid] = useState(false);
 
+    const togglePasswordVisibility = () => {
+        setPasswordVisible(!isPasswordVisible);
+    }
+
     useEffect(() => {
         const isValid = name.trim() !== '' &&
             username.trim() !== '' && isUsernameValid &&
-            /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email.trim()) && isEmailValid &&
+            /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email.trim()) &&
             password.length >= 6 &&
             /[A-Z]/.test(password) &&
             /[a-z]/.test(password) &&
             /[0-9]/.test(password);
         setIsFormValid(isValid);
-    }, [name, username, isUsernameValid, isEmailValid, email, password]);
+    }, [name, username, isUsernameValid, email, password]);
 
     const HandlerQueryUsername = async (username: string) => {
         const res = await findUsername(username);
         return res?.data?.success || false;
     }
 
-    const handleInputCheck = async (e: React.ChangeEvent<HTMLInputElement>, type: 'username' | 'email') => {
-        const value = e.target.value;
-        type === 'username' ? setUsername(value) : setEmail(value);
-        setErrors(prev => ({ ...prev, [type]: false }));
+    const debouncedUsernameCheck = useDebouncedCallback(async (value: string) => {
+        if (!value.trim()) {
+            setIsUsernameValid(false);
+            setSpinLoading(false);
+            return;
+        }
 
-        if (value.trim() !== '') {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
+        try {
+            setSpinLoading(true);
+            const result = await HandlerQueryUsername(value);
+            if (result) {
+                setIsUsernameValid(false);
+                setErrors(prev => ({ ...prev, username: true }));
+                toast.error('Username đã tồn tại');
+            } else {
+                setIsUsernameValid(true);
+                setErrors(prev => ({ ...prev, username: false }));
             }
-
-            timeoutRef.current = setTimeout(async () => {
-                try {
-                    setSpinLoading(true);
-                    const result = await HandlerQueryUsername(value);
-                    if (result) {
-                        type === 'username' ? setIsUsernameValid(false) : setIsEmailValid(false);
-                        setErrors(prev => ({ ...prev, [type]: true }));
-                        toast.error(`${type === 'username' ? 'Username' : 'Email'} đã tồn tại`);
-                    } else {
-                        type === 'username' ? setIsUsernameValid(true) : setIsEmailValid(true);
-                        setErrors(prev => ({ ...prev, [type]: false }));
-                    }
-                } catch (error) {
-                    type === 'username' ? setIsUsernameValid(false) : setIsEmailValid(false);
-                    toast.error('Error checking username');
-                } finally {
-                    setSpinLoading(false);
-                }
-            }, 800);
-        } else {
-            type === 'username' ? setIsUsernameValid(false) : setIsEmailValid(false);
+        } catch (error) {
+            setIsUsernameValid(false);
+            toast.error('Lỗi kiểm tra username');
+        } finally {
             setSpinLoading(false);
         }
+    }, 700);
+
+    const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setUsername(value);
+        setErrors(prev => ({ ...prev, username: false }));
+        debouncedUsernameCheck(value);
     };
+
+    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setEmail(value);
+        setErrors(prev => ({ ...prev, email: false }));
+    };
+
+    useEffect(() => {
+        return () => {
+            debouncedUsernameCheck.cancel();
+        };
+    }, []);
 
     const validateUsername = () => {
         if (username.trim() === '') {
@@ -102,7 +117,7 @@ const SignUp = () => {
         const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
         const isValid = emailRegex.test(email.trim());
         setErrors(prev => ({ ...prev, email: !isValid }));
-        return isValid && isEmailValid;
+        return isValid;
     };
 
     const validatePassword = () => {
@@ -119,9 +134,8 @@ const SignUp = () => {
     const validateForm = () => {
         const isNameValid = validateName();
         const isUsernameValid = validateUsername();
-        const isEmailValid = validateEmail();
         const isPasswordValid = validatePassword();
-        return isNameValid && isUsernameValid && isEmailValid && isPasswordValid;
+        return isNameValid && isUsernameValid && isPasswordValid;
     };
 
     const handleSubmit = async () => {
@@ -137,6 +151,7 @@ const SignUp = () => {
                             const resLogin = await login(username, password);
                             if (resLogin && resLogin.data.success) {
                                 resolve(resLogin.data.message);
+                                await refetchUser();
                                 closeModal();
                                 setIsAuthenticated(true);
                             }
@@ -213,7 +228,7 @@ const SignUp = () => {
                 >
                     <input id="username"
                         value={username}
-                        onChange={(e) => handleInputCheck(e, 'username')}
+                        onChange={(e) => handleUsernameChange(e)}
                         onBlur={validateUsername}
                         className={`h-[19px] dark:text-white pr-6 absolute bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer`}
                         type="text" />
@@ -238,7 +253,7 @@ const SignUp = () => {
                 >
                     <input id="email"
                         value={email}
-                        onChange={(e) => handleInputCheck(e, 'email')}
+                        onChange={(e) => handleEmailChange(e)}
                         onBlur={validateEmail}
                         className="h-[19px] pr-6 dark:text-white absolute bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer"
                         type="email" />
@@ -248,9 +263,6 @@ const SignUp = () => {
                         ${document.activeElement?.id === 'email' ? 'text-[#1d9bf0]' : ''}
                         ${errors.email ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-[#536471]"}`}
                     >Email</label>
-                    <div className={`absolute bottom-2 right-2 ${spinLoading ? "block animate-spin" : "hidden"}`}>
-                        <TbFidgetSpinner />
-                    </div>
                 </div>
                 {/* Email */}
 
@@ -274,13 +286,16 @@ const SignUp = () => {
                         }}
                         onBlur={validatePassword}
                         className="h-[19px] absolute dark:text-white bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer"
-                        type="password" />
+                        type={isPasswordVisible ? "password" : "text"} />
                     <label htmlFor="password"
                         className={`cursor-auto absolute peer-focus:top-4 peer-focus:text-sm top-1/2 left-2 -translate-y-1/2 transition-all duration-200 ease-in-out peer-focus:text-[#1d9bf0] leading-[23px] text-base
                         ${password ? 'top-4 text-sm' : 'top-1/2 -translate-y-1/2'}
                         ${document.activeElement?.id === 'password' ? 'text-[#1d9bf0]' : ''}
                         ${errors.password && !password ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-[#536471]"}`}
                     >Password</label>
+                    <div onClick={togglePasswordVisibility} className={`absolute cursor-pointer text-black dark:text-white bottom-2 right-2 transition-all duration-200 text-[18px] ease-in-out block`}>
+                        {isPasswordVisible ? <FaEye /> : <FaEyeSlash />}
+                    </div>
                 </div>
                 {/* Password */}
 

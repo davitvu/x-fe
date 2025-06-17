@@ -1,16 +1,19 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useModal } from "../../../contexts/ModalContext";
 import SignUp from "./SignUp";
 import Forgot from "./Forgot";
 import { ButtonSubmit } from "../../../components/Auth/ButtonSubmit";
-import { findUsername, login } from "../../../services/auth.service";
+import { fetchMe, findUsername, login } from "../../../services/auth.service";
 import toast from "react-hot-toast";
 import { TbFidgetSpinner } from "react-icons/tb";
 import { useCurrentAuthenticated } from "../../../contexts/Authenticate.context";
+import { useDebouncedCallback } from 'use-debounce';
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
     const { openModal, closeModal } = useModal();
-    const { setIsAuthenticated } = useCurrentAuthenticated();
+    const { setIsAuthenticated, refetchUser } = useCurrentAuthenticated();
 
     const [loading, setLoading] = useState(false);
     const [username, setUsername] = useState('');
@@ -22,48 +25,55 @@ const Login = () => {
     });
     const [isFormValid, setIsFormValid] = useState(false);
     const [spinLoading, setSpinLoading] = useState(false);
-    const timeoutRef = useRef<number | null>(null);
+    const [isPasswordVisible, setPasswordVisible] = useState(true);
 
+    const togglePasswordVisibility = () => {
+        setPasswordVisible(!isPasswordVisible);
+    }
 
-    // Kiểm tra form mỗi khi username hoặc password thay đổi
     useEffect(() => {
         const isValid = username.trim() !== '' && password.length >= 6;
         setIsFormValid(isValid);
     }, [username, password]);
+
+    const debouncedCheckUsername = useDebouncedCallback(async (value: string) => {
+        if (!value.trim()) {
+            setIsUsernameValid(false);
+            setSpinLoading(false);
+            return;
+        }
+
+        try {
+            setSpinLoading(true);
+            const result = await HandlerQueryUsername(value);
+            if (result) {
+                setIsUsernameValid(true);
+                setErrors(prev => ({ ...prev, username: false }));
+            } else {
+                setIsUsernameValid(false);
+                setErrors(prev => ({ ...prev, username: true }));
+            }
+        } catch (error) {
+            setIsUsernameValid(false);
+            toast.error('Error checking username');
+        } finally {
+            setSpinLoading(false);
+        }
+    }, 700);
 
     const handleUsernameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setUsername(value);
         setErrors(prev => ({ ...prev, username: false }));
 
-        if (value.trim() !== '') {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-
-            timeoutRef.current = setTimeout(async () => {
-                try {
-                    setSpinLoading(true);
-                    const result = await HandlerQueryUsername(value);
-                    if (result) {
-                        setIsUsernameValid(true);
-                        setErrors(prev => ({ ...prev, username: false }));
-                    } else {
-                        setIsUsernameValid(false);
-                        setErrors(prev => ({ ...prev, username: true }));
-                    }
-                } catch (error) {
-                    setIsUsernameValid(false);
-                    toast.error('Error checking username');
-                } finally {
-                    setSpinLoading(false);
-                }
-            }, 700);
-        } else {
-            setIsUsernameValid(false);
-            setSpinLoading(false);
-        }
+        debouncedCheckUsername(value);
     };
+
+    useEffect(() => {
+        return () => {
+            debouncedCheckUsername.cancel();
+        };
+    }, []);
 
     const HandlerQueryUsername = async (username: string) => {
         const res = await findUsername(username);
@@ -106,6 +116,7 @@ const Login = () => {
                         if (res && res.data && res.data.success && res.data.data) {
                             localStorage.setItem('accessToken', res.data.data.accessToken);
                             resolve(res.data.message);
+                            await refetchUser();
                             closeModal();
                             setIsAuthenticated(true);
                         } else if (res.data && !res.data.success) {
@@ -237,13 +248,16 @@ const Login = () => {
                         }}
                         onBlur={validatePassword}
                         className="h-[19px] absolute dark:text-white bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer"
-                        type="password" />
+                        type={isPasswordVisible ? "password" : "text"} />
                     <label htmlFor="password"
                         className={`cursor-auto absolute peer-focus:top-4 peer-focus:text-sm top-1/2 left-2 -translate-y-1/2 transition-all duration-200 ease-in-out peer-focus:text-[#1d9bf0] leading-[23px] text-base
                         ${password ? 'top-4 text-sm' : 'top-1/2 -translate-y-1/2'}
                         ${document.activeElement?.id === 'password' ? 'text-[#1d9bf0]' : ''}
                         ${errors.password && !password ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-[#536471]"}`}
                     >Password</label>
+                    <div onClick={togglePasswordVisibility} className={`absolute cursor-pointer text-black dark:text-white bottom-2 right-2 transition-all duration-200 text-[18px] ease-in-out block`}>
+                        {isPasswordVisible ? <FaEye /> : <FaEyeSlash />}
+                    </div>
                 </div>
                 : <></>}
             {/* Password */}
