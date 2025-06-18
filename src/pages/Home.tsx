@@ -3,8 +3,7 @@ import { useCurrentAuthenticated } from "../contexts/Authenticate.context";
 import { logout } from "../services/auth.service";
 
 const HomePage = () => {
-    const { user } = useCurrentAuthenticated();
-    const { setUser, setIsAuthenticated } = useCurrentAuthenticated();
+    const { user, setUser, setIsAuthenticated } = useCurrentAuthenticated();
 
     const handleLogout = async () => {
         toast.promise(
@@ -95,6 +94,7 @@ const HomePage = () => {
                             </div>
 
                             {/* All user fields */}
+                            <UserInfoField label="Id" value={user?._id} />
                             <UserInfoField label="Email" value={user?.email} />
                             <UserInfoField label="Role" value={user?.role} />
                             <UserInfoField label="Avatar URL" value={user?.avatarUrl} />

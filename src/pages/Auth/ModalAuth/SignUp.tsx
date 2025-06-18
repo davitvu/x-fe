@@ -154,7 +154,10 @@ const SignUp = () => {
                                 await refetchUser();
                                 closeModal();
                                 setIsAuthenticated(true);
+                                toast.success("Đăng nhập thành công");
                                 resolve(resLogin.data.message);
+                            } else {
+                                toast.error("Đăng nhập thất bại");
                             }
                         } else if (res.data && !res.data.success) {
                             reject(res.data.message);
@@ -168,8 +171,8 @@ const SignUp = () => {
                     }
                 }),
                 {
-                    loading: 'Đang đăng nhập...',
-                    success: <b>Đăng nhập thành công!</b>,
+                    loading: 'Đang đăng ký...',
+                    success: <b>Đăng ký thành công!</b>,
                     error: (error) => <b>{error as string}</b>,
                 }
             );

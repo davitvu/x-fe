@@ -34,20 +34,22 @@ instance.interceptors.response.use(function (response) {
 }, async function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
-
+    
     if (error) {
         const originalRequest = error.config;
+        const hasAccessToken = localStorage.getItem('accessToken');
 
-        if (error.response && error.response.status === 401 && !originalRequest._retry && !isRefreshing) {
+        if (error.response?.status === 401 && !originalRequest._retry && !isRefreshing && hasAccessToken) {
             originalRequest._retry = true;
             isRefreshing = true;
+
 
             try {
                 const res = await refreshToken();
                 if (res?.data?.data?.accessToken) {
                     localStorage.setItem('accessToken', res.data.data.accessToken);
                     originalRequest.headers['Authorization'] = `Bearer ${res.data.data.accessToken}`;
-                    
+
                     return instance(originalRequest);
                 }
             } catch (error) {
