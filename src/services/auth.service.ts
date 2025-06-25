@@ -1,6 +1,6 @@
 import axios from "./axios.customize";
 
-const authApiPart = "/api/v1/auth";
+const authApiPart = "/api/auth";
 
 const signup = async (name: string, username: string, email: string, password: string) => {
     try {
