@@ -1,5 +1,4 @@
 import axios from "./axios.customize";
-import type { BackendAuthRes, LoginResponse, SignUpResponse, UserId, UserProfile } from "../types/auth";
 
 const authApiPart = "/api/v1/auth";
 

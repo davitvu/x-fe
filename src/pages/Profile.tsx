@@ -9,7 +9,9 @@ const ProfilePage = () => {
     const { isAuthenticated, user } = useCurrentAuthenticated();
     const { setProfileData } = useProfileContext();
     const { username } = useParams<{ username: string }>();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [userData, setUserData] = useState<UserProfile | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<"Posts" | "Replies" | "Media" | "Likes">("Posts");
@@ -73,28 +75,28 @@ const ProfilePage = () => {
             setError("Đã có lỗi xảy ra");
         }
     }
-    
+
     const isOwnProfile = user?.username === username;
 
-    // if (error) {
-    //     return (
-    //         <div className="flex items-center justify-center min-h-screen">
-    //             <div className="text-center">
-    //                 <h1 className="mb-2 text-2xl font-bold text-red-500">Có lỗi xảy ra</h1>
-    //                 <p className="mb-4 text-gray-600">{error}</p>
-    //                 <button
-    //                     onClick={() => {
-    //                         setError(null);
-    //                         fetchUserProfile();
-    //                     }}
-    //                     className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-    //                 >
-    //                     Thử lại
-    //                 </button>
-    //             </div>
-    //         </div>
-    //     );
-    // }
+    if (error) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <h1 className="mb-2 text-2xl font-bold text-red-500">Có lỗi xảy ra</h1>
+                    <p className="mb-4 text-gray-600">{error}</p>
+                    <button
+                        onClick={() => {
+                            setError(null);
+                            fetchUserProfile();
+                        }}
+                        className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+                    >
+                        Thử lại
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     if (!userData) {
         return (
@@ -158,14 +160,14 @@ const ProfilePage = () => {
                             </button>
                         ) : (
                             <>
-                                <button 
+                                <button
                                     onClick={() => toast("Tính năng đang đang phát triển DumaSaigon", { icon: '🥰' })}
                                     className="p-2 transition-colors border border-gray-300 rounded-full dark:border-gray-600 text-near-black dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900">
                                     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
                                     </svg>
                                 </button>
-                                <button 
+                                <button
                                     onClick={() => toast("Tính năng đang đang phát triển DumaSaigon", { icon: '🥰' })}
                                     className="px-4 py-1.5 active:bg-X-blue bg-near-black dark:bg-white text-white dark:text-black rounded-full font-bold text-sm hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
                                     Follow
