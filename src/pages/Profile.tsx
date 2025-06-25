@@ -9,9 +9,6 @@ const ProfilePage = () => {
     const { isAuthenticated, user } = useCurrentAuthenticated();
     const { setProfileData } = useProfileContext();
     const { username } = useParams<{ username: string }>();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [userData, setUserData] = useState<UserProfile | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<"Posts" | "Replies" | "Media" | "Likes">("Posts");
@@ -40,7 +37,6 @@ const ProfilePage = () => {
                     const res = await getUserIdByUsername(username);
                     if (res.data.success && res.data.data && res.data.data.userId) {
                         userId = res.data.data.userId;
-                        setCurrentUserId(userId);
                     } else {
                         setError("Không tìm thấy userId");
                         return;
