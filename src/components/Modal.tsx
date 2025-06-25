@@ -1,5 +1,5 @@
 import { IoClose } from "react-icons/io5";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface ModalProps {
     show: boolean;
@@ -8,6 +8,10 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ show, onClose, children }) => {
+
+    // Vấn đề: Khi có nhiều modal, có thể gây conflict về overflow style.
+    const originalOverflow = useRef<string>('');
+
     useEffect(() => {
         /**
         1. useEffect để theo dõi prop show
@@ -18,13 +22,14 @@ const Modal: React.FC<ModalProps> = ({ show, onClose, children }) => {
         4. cleanup function trong useEffect để reset overflow về 'unset' khi component unmount
         */
         if (show) {
+            originalOverflow.current = document.body.style.overflow || '';
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'unset';
         }
 
         return () => {
-            document.body.style.overflow = 'unset';
+            document.body.style.overflow = originalOverflow.current;
         };
     }, [show]);
 
@@ -38,7 +43,7 @@ const Modal: React.FC<ModalProps> = ({ show, onClose, children }) => {
 
             <div className="relative w-full overflow-scroll h-full bg-white dark:bg-black sm:min-w-[600px] sm:min-h-[400px] sm:max-w-[80vw] sm:max-h-[90vh] sm:w-auto sm:h-auto sm:rounded-2xl sm:shadow-xl">
                 <div className="sticky top-0 left-0 right-0 flex items-center justify-center z-50 px-4 py-3 bg-white opacity-[98%] dark:bg-black">
-                    <div className="absolute left-2 cursor-pointer p-2 rounded-full transition-all duration-300 ease-in-out hover:bg-[#0f14191a] dark:hover:bg-[#ffffff1a]" onClick={onClose}>
+                    <div className="absolute left-2 cursor-pointer p-2 rounded-full transition-all duration-300 ease-in-out hover:bg-near-black dark:hover:bg-[#ffffff1a]" onClick={onClose}>
                         <IoClose className="w-[25px] sm:w-[22px] h-[25px] sm:h-[22px] dark:text-white" />
                     </div>
                     <div className="flex justify-center flex-1">

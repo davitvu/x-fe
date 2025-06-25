@@ -78,7 +78,7 @@ const AuthPage = () => {
                             <span className="text-white text-base md:text-[15px] font-semibold">Create account</span>
                         </button>
                         <div className="w-full md:w-[300px] text-[10px] mb-10 dark:text-[#71767B]">
-                            <p>By signing up, you agree to the <a href="#" className="text-[#1D9BF0] hover:underline">Terms of Service</a> and <a href="#" className="text-[#1D9BF0] hover:underline">Privacy Policy</a>, including <a href="#" className="text-[#1D9BF0] hover:underline">Cookie Use.</a></p>
+                            <p>By signing up, you agree to the <a href="#" className="text-X-blue hover:underline">Terms of Service</a> and <a href="#" className="text-X-blue hover:underline">Privacy Policy</a>, including <a href="#" className="text-X-blue hover:underline">Cookie Use.</a></p>
                         </div>
                         <p className="mb-4 font-semibold">Already have an account?</p>
                         <button
@@ -100,7 +100,7 @@ const AuthPage = () => {
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-wrap justify-center mb-3 md:mx-4 gap-y-1 text-xs text-[#536471] dark:text-[#71757B]">
+                <div className="flex flex-wrap justify-center mb-3 md:mx-4 gap-y-1 text-xs text-dark-blueish-gray dark:text-[#71757B]">
                     <div className="my-1 mr-2">
                         <a href="#" className="hover:underline">About</a>
                         <span className="pl-2">|</span>

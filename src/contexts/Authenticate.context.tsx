@@ -4,8 +4,8 @@ import LoadingWithLogo from "../components/Loading/LoadingWithLogo";
 interface AuthenticateContext {
     isAuthenticated: boolean;
     setIsAuthenticated: (value: boolean) => void;
-    setUser: (value: User | null) => void;
-    user: User | null;
+    setUser: (value: FetchMe | null) => void;
+    user: FetchMe | null;
     isAppLoading: boolean;
     setIsAppLoading: (value: boolean) => void;
     refetchUser: () => Promise<void>;
@@ -19,11 +19,15 @@ type Props = {
 
 export const AuthenticatedProvider = (props: Props) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<FetchMe | null>(null);
     const [isAppLoading, setIsAppLoading] = useState<boolean>(true);
 
     const fetchUser = async () => {
         try {
+            const token = localStorage.getItem('accessToken');
+            if (!token) {
+                return;
+            }
             const res = await fetchMe();
             if (res?.data?.data) {
                 setUser(res.data.data);

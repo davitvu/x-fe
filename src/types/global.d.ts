@@ -1,14 +1,18 @@
 export { };
 
 declare global {
-    interface User {
+    interface FetchMe {
         _id: string,
         name: string,
         username: string,
         email: string,
-        role: string,
         avatarUrl: string,
-        createdAt: string,
-        updatedAt: string
+        tweetCount: number,
+        role: string,
+        checkMark: string,
+        isActive: boolean,
+        isBlock: boolean,
+        createdAt: Date,
+        updatedAt: Date,
     }
 }

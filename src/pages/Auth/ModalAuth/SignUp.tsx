@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useModal } from "../../../contexts/ModalContext";
 import Login from "./Login";
-import { ButtonSubmit } from "../../../components/Auth/ButtonSubmit";
+import { ButtonSubmit } from "../../../components/ButtonSubmit";
 import toast from "react-hot-toast";
 import { TbFidgetSpinner } from "react-icons/tb";
 import { findUsername, login, signup } from "../../../services/auth.service";
@@ -198,7 +198,7 @@ const SignUp = () => {
                 <div className={`group relative mb-5 border rounded-sm h-[58px] w-full transition-all duration-200 ease-in-out 
                 ${errors.name
                         ? 'border-[#f4212e] dark:border-[#f4212e]'
-                        : 'border-[#cfd9de] dark:border-[#333639] has-[:focus]:border-[#1d9bf0] has-[:focus]:shadow-[0px_0px_0px_1px_rgb(29,155,240)]'}`}
+                        : 'border-light-blueish-gray dark:border-[#333639] has-[:focus]:border-X-blue has-[:focus]:shadow-[0px_0px_0px_1px_rgb(29,155,240)]'}`}
                     onClick={() => document.getElementById('name')?.focus()}
                 >
                     <input id="name"
@@ -212,13 +212,13 @@ const SignUp = () => {
                         className={`h-[19px] dark:text-white absolute bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer`}
                         type="text" />
                     <label htmlFor="name"
-                        className={`cursor-auto absolute peer-focus:top-4 peer-focus:text-sm top-1/2 left-2 -translate-y-1/2 transition-all duration-200 ease-in-out peer-focus:text-[#1d9bf0] leading-[23px] text-base
+                        className={`cursor-auto absolute peer-focus:top-4 peer-focus:text-sm top-1/2 left-2 -translate-y-1/2 transition-all duration-200 ease-in-out peer-focus:text-X-blue leading-[23px] text-base
                         ${name ? 'top-4 text-sm' : 'top-1/2 -translate-y-1/2'}
-                        ${document.activeElement?.id === 'name' ? 'text-[#1d9bf0]' : ''}
-                        ${errors.name && !name ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-[#536471]"}`}
+                        ${document.activeElement?.id === 'name' ? 'text-X-blue' : ''}
+                        ${errors.name && !name ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-dark-blueish-gray"}`}
                     >Name</label>
                     <label htmlFor="name"
-                        className="absolute text-xs top-2 peer-focus:block hidden right-2 text-[#536471] transition-all duration-200 ease-in-out"
+                        className="absolute hidden text-xs transition-all duration-200 ease-in-out top-2 peer-focus:block right-2 text-dark-blueish-gray"
                     >{lengthInputFullname} / 50</label>
                 </div>
                 {/* Name */}
@@ -227,7 +227,7 @@ const SignUp = () => {
                 <div className={`group relative mb-5 border rounded-sm h-[58px] w-full transition-all duration-200 ease-in-out 
                 ${errors.username
                         ? 'border-[#f4212e] dark:border-[#f4212e]'
-                        : 'border-[#cfd9de] dark:border-[#333639] has-[:focus]:border-[#1d9bf0] has-[:focus]:shadow-[0px_0px_0px_1px_rgb(29,155,240)]'}`}
+                        : 'border-light-blueish-gray dark:border-[#333639] has-[:focus]:border-X-blue has-[:focus]:shadow-[0px_0px_0px_1px_rgb(29,155,240)]'}`}
                     onClick={() => document.getElementById('username')?.focus()}
                 >
                     <input id="username"
@@ -237,10 +237,10 @@ const SignUp = () => {
                         className={`h-[19px] dark:text-white pr-6 absolute bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer`}
                         type="text" />
                     <label htmlFor="username"
-                        className={`cursor-auto absolute peer-focus:top-4 peer-focus:text-sm top-1/2 left-2 -translate-y-1/2 transition-all duration-200 ease-in-out peer-focus:text-[#1d9bf0] leading-[23px] text-base
+                        className={`cursor-auto absolute peer-focus:top-4 peer-focus:text-sm top-1/2 left-2 -translate-y-1/2 transition-all duration-200 ease-in-out peer-focus:text-X-blue leading-[23px] text-base
                         ${username ? 'top-4 text-sm' : 'top-1/2 -translate-y-1/2'}
-                        ${document.activeElement?.id === 'username' ? 'text-[#1d9bf0]' : ''}
-                        ${errors.username && !username ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-[#536471]"}`}
+                        ${document.activeElement?.id === 'username' ? 'text-X-blue' : ''}
+                        ${errors.username && !username ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-dark-blueish-gray"}`}
                     >Username</label>
                     <div className={`absolute bottom-2 right-2 ${spinLoading ? "block animate-spin" : "hidden"}`}>
                         <TbFidgetSpinner />
@@ -252,7 +252,7 @@ const SignUp = () => {
                 <div className={`group relative mb-5 border rounded-sm h-[58px] w-full transition-all duration-200 ease-in-out 
                 ${errors.email
                         ? 'border-[#f4212e] dark:border-[#f4212e]'
-                        : 'border-[#cfd9de] dark:border-[#333639] has-[:focus]:border-[#1d9bf0] has-[:focus]:shadow-[0px_0px_0px_1px_rgb(29,155,240)]'}`}
+                        : 'border-light-blueish-gray dark:border-[#333639] has-[:focus]:border-X-blue has-[:focus]:shadow-[0px_0px_0px_1px_rgb(29,155,240)]'}`}
                     onClick={() => document.getElementById('email')?.focus()}
                 >
                     <input id="email"
@@ -262,10 +262,10 @@ const SignUp = () => {
                         className="h-[19px] pr-6 dark:text-white absolute bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer"
                         type="email" />
                     <label htmlFor="email"
-                        className={`cursor-auto absolute peer-focus:top-4 peer-focus:text-sm top-1/2 left-2 -translate-y-1/2 transition-all duration-200 ease-in-out peer-focus:text-[#1d9bf0] leading-[23px] text-base
+                        className={`cursor-auto absolute peer-focus:top-4 peer-focus:text-sm top-1/2 left-2 -translate-y-1/2 transition-all duration-200 ease-in-out peer-focus:text-X-blue leading-[23px] text-base
                         ${email ? 'top-4 text-sm' : 'top-1/2 -translate-y-1/2'}
-                        ${document.activeElement?.id === 'email' ? 'text-[#1d9bf0]' : ''}
-                        ${errors.email ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-[#536471]"}`}
+                        ${document.activeElement?.id === 'email' ? 'text-X-blue' : ''}
+                        ${errors.email ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-dark-blueish-gray"}`}
                     >Email</label>
                 </div>
                 {/* Email */}
@@ -279,7 +279,7 @@ const SignUp = () => {
                 <div className={`group relative mb-5 border rounded-sm h-[58px] w-full transition-all duration-200 ease-in-out 
                 ${errors.password
                         ? 'border-[#f4212e] dark:border-[#f4212e]'
-                        : 'border-[#cfd9de] dark:border-[#333639] has-[:focus]:border-[#1d9bf0] has-[:focus]:shadow-[0px_0px_0px_1px_rgb(29,155,240)]'}`}
+                        : 'border-light-blueish-gray dark:border-[#333639] has-[:focus]:border-X-blue has-[:focus]:shadow-[0px_0px_0px_1px_rgb(29,155,240)]'}`}
                     onClick={() => document.getElementById('password')?.focus()}
                 >
                     <input id="password"
@@ -292,10 +292,10 @@ const SignUp = () => {
                         className="h-[19px] absolute dark:text-white bottom-2 left-2 right-2 w-[100%-8px] outline-none transition-all duration-200 ease-in-out peer"
                         type={isPasswordVisible ? "password" : "text"} />
                     <label htmlFor="password"
-                        className={`cursor-auto absolute peer-focus:top-4 peer-focus:text-sm top-1/2 left-2 -translate-y-1/2 transition-all duration-200 ease-in-out peer-focus:text-[#1d9bf0] leading-[23px] text-base
+                        className={`cursor-auto absolute peer-focus:top-4 peer-focus:text-sm top-1/2 left-2 -translate-y-1/2 transition-all duration-200 ease-in-out peer-focus:text-X-blue leading-[23px] text-base
                         ${password ? 'top-4 text-sm' : 'top-1/2 -translate-y-1/2'}
-                        ${document.activeElement?.id === 'password' ? 'text-[#1d9bf0]' : ''}
-                        ${errors.password && !password ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-[#536471]"}`}
+                        ${document.activeElement?.id === 'password' ? 'text-X-blue' : ''}
+                        ${errors.password && !password ? "!text-[#f4212e] dark:text-[#f4212e]" : "dark:text-[#71767b] text-dark-blueish-gray"}`}
                     >Password</label>
                     <div onClick={togglePasswordVisibility} className={`absolute cursor-pointer text-black dark:text-white bottom-2 right-2 transition-all duration-200 text-[18px] ease-in-out block`}>
                         {isPasswordVisible ? <FaEye /> : <FaEyeSlash />}
@@ -304,10 +304,10 @@ const SignUp = () => {
                 {/* Password */}
 
                 <span
-                    className="text-[#536471] self-start text-sm dark:text-[#71767b]"
+                    className="text-dark-blueish-gray self-start text-sm dark:text-[#71767b]"
                 >
                     Have an account already?
-                    <button onClick={() => openModal(<Login />)} className="text-[#1d9bf0] ml-1 cursor-pointer hover:underline sm:mb-8">Log in</button>
+                    <button onClick={() => openModal(<Login />)} className="ml-1 cursor-pointer text-X-blue hover:underline sm:mb-8">Log in</button>
                 </span>
             </div>
             <div className="sticky bottom-0 left-0 right-0 flex flex-col items-center justify-center py-6 bg-white dark:bg-black">
@@ -315,8 +315,9 @@ const SignUp = () => {
                     onClick={() => handleSubmit()}
                     disabled={!isFormValid}
                     isFormValid={isFormValid}
+                    className="!h-[45px] "
                 >
-                    {loading ? 'Signing in...' : 'Sign in'}
+                    {loading ? 'Signing up...' : 'Sign up'}
                 </ButtonSubmit>
             </div>
         </div>

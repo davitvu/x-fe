@@ -9,5 +9,61 @@ body {
     font-family: "Twitter Chirp";
 }
 
-@layer base {
+@layer base {}
+
+/** Breakpoint */
+@theme {
+    --breakpoint-tablet: 500px;
+    --breakpoint-desktop: 990px;
+    --breakpoint-desktop-large: 1385px;
+}
+
+/** Breakpoint */
+
+/** Color */
+@theme {
+    --color-light-blueish-gray: rgb(207, 217, 222);
+    --color-near-black: rgb(15, 20, 25);
+    --color-near-black-20-opa: rgba(15, 20, 25, 0.2);
+    --color-X-blue: rgb(29, 155, 240);
+    --color-extra-light-gray: rgb(239, 243, 244);
+    --color-dark-blueish-gray: rgb(83, 100, 113);
+    --color-medium-dark-blue: rgb(23, 124, 192)
+}
+
+/** Color */
+
+/** Spacing */
+@theme {
+    --spacing-header-height: 53px;
+    --spacing-width-header-desktop: 31.38%;
+}
+
+/** Spacing */
+
+/** Animation */
+@theme {
+    --animate-fab-fade-in-up: fab-fade-in-up 0.5s ease-out forwards;
+    --animate-left-to-right: left-to-right 0.3s ease-in-out forwards;
+}
+
+/** Animation */
+
+@keyframes left-to-right {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes fab-fade-in-up {
+    0% {
+        bottom: 50px;
+    }
+
+    40% {
+        bottom: 73px;
+    }
 }

@@ -1,141 +1,91 @@
-import toast from "react-hot-toast";
-import { useCurrentAuthenticated } from "../contexts/Authenticate.context";
-import { logout } from "../services/auth.service";
+import { useEffect, useRef, useState } from "react";
+import Foryou from "./MainHomeContent/Foryou";
+import Following from "./MainHomeContent/Following";
+import { FABNewTweet } from "../components/FABComponent";
+import { useTitle } from "../features/useTitle";
+import { useIsMobile } from "../hooks/useMediaQuery";
+
+type Tab = "Foryou" | "Following";
 
 const HomePage = () => {
-    const { user, setUser, setIsAuthenticated } = useCurrentAuthenticated();
+    useTitle("Home");
+    const isMobile = useIsMobile();
 
-    const handleLogout = async () => {
-        toast.promise(
-            new Promise(async (resolve, reject) => {
-                try {
-                    const res = await logout();
-                    if (res?.data?.success) {
-                        // Clear auth data
-                        localStorage.removeItem('accessToken');
-                        setUser(null);
-                        setIsAuthenticated(false);
-                        resolve('Đăng xuất thành công');
-                    } else {
-                        reject(res?.data?.message || 'Đăng xuất thất bại');
-                    }
-                } catch (error: any) {
-                    reject(error.response?.data?.message || 'Lỗi hệ thống');
-                }
-            }),
-            {
-                loading: 'Đang đăng xuất...',
-                success: <b>Đăng xuất thành công!</b>,
-                error: (error) => <b>{error as string}</b>,
-            }
-        );
-    }
+    const [tabActive, setTabActive] = useState<Tab>("Foryou");
+    const foryouButtonRef = useRef<HTMLButtonElement>(null);
+    const followingButtonRef = useRef<HTMLButtonElement>(null);
+    const [tabWidths, setTabWidths] = useState({
+        Foryou: 0,
+        Following: 0
+    });
 
-    // Thêm base URL cho avatar
-    const avatarBaseUrl = "avatar/random";
-
-    // Format date helper
-    const formatDate = (date: string) => {
-        return new Date(date).toLocaleDateString('vi-VN', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    };
-
-    // Update UserInfoField to handle different value types
-    const UserInfoField = ({ label, value }: { label: string; value: any }) => (
-        <div className="flex border-b dark:border-gray-700 pb-3 last:border-b-0">
-            <span className="font-medium w-1/3 text-gray-600 dark:text-gray-300 capitalize">
-                {label}:
-            </span>
-            <span className="text-gray-800 dark:text-gray-100 flex-1">
-                {typeof value === 'boolean'
-                    ? value ? 'Yes' : 'No'
-                    : value || 'N/A'}
-            </span>
-        </div>
-    );
+    useEffect(() => {
+        if (foryouButtonRef.current && followingButtonRef.current) {
+            setTabWidths({
+                Foryou: foryouButtonRef.current.offsetWidth,
+                Following: followingButtonRef.current.offsetWidth
+            });
+        }
+    }, [tabActive]);
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            <div className="container mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-white">
-                    HomePage
-                </h1>
+        <>
+            {/** Mobile */}
+            {isMobile &&
+                <>
+                    <FABNewTweet />
+                </>
+            }
+            {/** Header Mobile */}
 
-                <div className="flex items-center flex-col justify-center">
-                    {/* Avatar Section */}
-                    <div className="mb-6">
-                        <img
-                            src={user?.avatarUrl ? `${avatarBaseUrl}/${user.avatarUrl}.jpg` : '/default-avatar.jpg'}
-                            alt="User avatar"
-                            className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
-                            onError={(e) => {
-                                const img = e.target as HTMLImageElement;
-                                img.src = '/default-avatar.jpg';
-                            }}
-                        />
-                    </div>
-
-                    {/* User Info Card */}
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
-                        <div className="space-y-4">
-                            {/* Name & Username section */}
-                            <div className="text-center mb-6">
-                                <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                                    {user?.name || 'N/A'}
-                                </h2>
-                                <p className="text-gray-600 dark:text-gray-400">
-                                    @{user?.username || 'N/A'}
-                                </p>
-                            </div>
-
-                            {/* All user fields */}
-                            <UserInfoField label="Id" value={user?._id} />
-                            <UserInfoField label="Email" value={user?.email} />
-                            <UserInfoField label="Role" value={user?.role} />
-                            <UserInfoField label="Avatar URL" value={user?.avatarUrl} />
-                            {/* <UserInfoField label="Is Admin" value={user?.isAdmin} /> */}
-                            {/* <UserInfoField label="Is Active" value={user?.isActive} /> */}
-                            {/* <UserInfoField label="Phone" value={user?.phone} /> */}
-                            {/* <UserInfoField label="Address" value={user?.address} /> */}
-                            {/* <UserInfoField label="Bio" value={user?.bio} /> */}
-                            <UserInfoField
-                                label="Created At"
-                                value={user?.createdAt ? formatDate(user.createdAt) : null}
-                            />
-                            <UserInfoField
-                                label="Updated At"
-                                value={user?.updatedAt ? formatDate(user.updatedAt) : null}  // Now using updatedAt
-                            />
-                            {/* <UserInfoField label="Last Login"
-                                value={user?.lastLogin ? formatDate(user.lastLogin) : null}
-                            /> */}
-                        </div>
-                    </div>
-
-                    {/* Logout Button */}
-                    <div className="mt-6">
+            {/* Tab */}
+            <div className="fixed left-0 right-0 z-0 cursor-pointer tablet:sticky bg-white/95 backdrop-blur-xs border-b border-extra-light-gray tablet:top-0 tablet:right-0 top-header-height dark:bg-black">
+                <div className="flex px-0 h-header-height ">
+                    <div onClick={() => setTabActive("Foryou")}
+                        className={`flex relative items-center justify-center grow active:bg-near-black-20-opa`}
+                    >
                         <button
-                            onClick={handleLogout}
-                            className="px-6 cursor-pointer py-2 bg-red-500 text-white rounded-md hover:bg-red-600 
-                                     transition-colors duration-200 flex items-center gap-2"
+                            ref={foryouButtonRef}
+                            className={`text-[15px] ${tabActive === "Foryou" ? "text-near-black font-bold" : "font-medium text-dark-blueish-gray"}`}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd"
-                                    d="M3 3a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H3zm11 4a1 1 0 1 0-2 0v4a1 1 0 1 0 2 0V7z"
-                                    clipRule="evenodd" />
-                            </svg>
-                            Logout
+                            For you
                         </button>
+                        <div
+                            className={`absolute bottom-0 h-1 transform -translate-x-1/2 rounded-full left-1/2 bg-X-blue transition-all duration-300`}
+                            style={{
+                                width: tabActive === "Foryou" ? `${tabWidths.Foryou}px` : "0px"
+                            }}
+                        ></div>
+                    </div>
+                    <div onClick={() => setTabActive("Following")}
+                        className={`flex relative items-center justify-center grow active:bg-near-black-20-opa`}
+                    >
+                        <button
+                            ref={followingButtonRef}
+                            className={`text-[15px] ${tabActive === "Following" ? "text-near-black font-bold" : "font-medium text-dark-blueish-gray"}`}
+                        >
+                            Following
+                        </button>
+                        <div
+                            className={`absolute bottom-0 h-1 transform -translate-x-1/2 rounded-full left-1/2 bg-X-blue transition-all duration-300`}
+                            style={{
+                                width: tabActive === "Following" ? `${tabWidths.Following}px` : "0px"
+                            }}
+                        ></div>
                     </div>
                 </div>
+                {/* <div className="border-t border-b border-extra-light-gray text-X-blue font-[15px]  h-[48px] flex justify-center items-center">
+                            <p>Show 91 posts</p>
+                        </div> */}
             </div>
-        </div>
+            {/* Tab */}
+
+            {/* Content */}
+            <div className="px-4 mt-[106px]"> {/** tinh ca cai show 91 posts la 106px */}
+                {tabActive === "Foryou" ? <Foryou /> : <Following />}
+            </div>
+            {/* Content */}
+        </>
     )
 };
 
